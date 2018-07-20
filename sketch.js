@@ -22,9 +22,17 @@ function draw() {
 				elevation = elevation*.5; // océans profonds
 			}
 
+			if (x > 0 && y > 0 && x < width && y < height) {
+				topLeftElev = map(noise((x-1)*noiseScale, (y-1)*noiseScale), 0, 1, 0, 1);
+				bottomRightElev = map(noise((x+1)*noiseScale, (y+1)*noiseScale), 0, 1, 0, 1);
+				normal = bottomRightElev - topLeftElev;
+			} else {
+				normal = 0;
+			}
 
 			color = [elevation, .5+elevation/2, 1-elevation];
 			stroke(...color); point(x, y);
+			stroke(0, 0, 0, normal*20); point(x, y);
 
 		}
 	}
