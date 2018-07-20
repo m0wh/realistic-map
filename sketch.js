@@ -6,6 +6,30 @@ let color;
 let normal;
 let previousElevation;
 
+const biomes = [
+	{
+		name: "desert",
+		proba: ({ temperature, altitude, terrain, dryness }) => (dryness*2 + temperature + 1-terrain) /4
+	},
+	{
+		name: "forest",
+		proba: ({ temperature, altitude, terrain, dryness }) => ((1-dryness)*2 + temperature) /3
+	},
+	{
+		name: "grassland",
+		proba: ({ temperature, altitude, terrain, dryness }) => (1-dryness + (1-terrain)*2) /3
+	},
+	{
+		name: "tundra",
+		proba: ({ temperature, altitude, terrain, dryness }) => (dryness + 1-temperature) /2
+	},
+	{
+		name: "ocean",
+		proba: ({ temperature, altitude, terrain, dryness }) => (1-dryness + 1-altitude) /2
+	},
+];
+const whatBiome = (climate) => biomes.sort((a,b) => a.proba(climate) < b.proba(climate))[0].name;
+
 function setup() {
 	createCanvas(500, 500);
 	noLoop();
@@ -56,7 +80,7 @@ function draw() {
 const getElevation = (x, y) => 1 - noise((x)*(1/scale), (y)*(1/scale));
 const limit = (val, min, max) => val >= max ? max : val <= min ? min : val;
 
-mapColorFunctions = (elev) => {
+mapColorFunctions = (elev, biome) => {
 	const h = 1- limit(elev*1.1, 0, .9);
 	const s = round(elev)/2+.5;
 	const l = .05+elev*.90;
